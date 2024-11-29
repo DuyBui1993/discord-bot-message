@@ -2,11 +2,9 @@ import json
 import sys
 import random
 import time
+import os
 from datetime import datetime
 from http.client import HTTPSConnection
-
-INFO_FILE = "info.txt"
-MESSAGES_FILE = "messages.txt"
 
 def get_timestamp():
     """
@@ -21,19 +19,18 @@ def random_sleep(duration, min_random, max_random):
 
 def read_info():
     try:
-        with open(INFO_FILE, "r") as file:
-            return file.read().splitlines()
-    except FileNotFoundError:
-        print(f"{get_timestamp()} Info file not found.")
-        return None
-
-def write_info(user_id, token, channel_url, channel_id, delay, sleep):
-    try:
-        with open(INFO_FILE, "w") as file:
-            file.write(f"{user_id}\n{token}\n{channel_url}\n{channel_id}\n{delay}\n{sleep}")
+        user_id = os.getenv("USER_ID")
+        token = os.getenv("DISCORD_TOKEN")
+        channel_url = os.getenv("CHANNEL_URL")
+        channel_id = os.getenv("CHANNEL_ID")
+        delay = os.getenv("DELAY_BETWEEN_MESSAGES")
+        sleep = os.getenv("SLEEP_TIME")
+        if not all([user_id, token, channel_url, channel_id, delay, sleep]):
+            raise ValueError("One or more environment variables are missing")
+        return [user_id, token, channel_url, channel_id, delay, sleep]
     except Exception as e:
-        print(f"{get_timestamp()} Error configuring user information: {e}")
-        exit()
+        print(f"{get_timestamp()} Error reading environment variables: {e}")
+        return None
 
 def configure_info():
     try:
@@ -43,8 +40,13 @@ def configure_info():
         channel_id = input("Discord channel ID: ")
         delay = input("Delay (in seconds) between messages: ")
         sleep = input("Sleep time (in seconds): ")
-        write_info(user_id, token, channel_url, channel_id, delay, sleep)
-        print(f"Written config to info.txt, please rerun to start!")
+        os.environ["USER_ID"] = user_id
+        os.environ["DISCORD_TOKEN"] = token
+        os.environ["CHANNEL_URL"] = channel_url
+        os.environ["CHANNEL_ID"] = channel_id
+        os.environ["DELAY_BETWEEN_MESSAGES"] = delay
+        os.environ["SLEEP_TIME"] = sleep
+        print(f"Environment variables set, please rerun to start!")
     except Exception as e:
         print(f"{get_timestamp()} Error configuring user information: {e}")
         exit()
@@ -55,8 +57,9 @@ def set_channel():
         user_id, token, _, _, delay, sleep = info
         channel_url = input("Discord channel URL: ")
         channel_id = input("Discord channel ID: ")
-        write_info(user_id, token, channel_url, channel_id, delay, sleep)
-        print(f"Written config to info.txt, please rerun to start!")
+        os.environ["CHANNEL_URL"] = channel_url
+        os.environ["CHANNEL_ID"] = channel_id
+        print(f"Environment variables set, please rerun to start!")
 
 def show_help():
     print("Showing help for discord-auto-messenger")
@@ -93,9 +96,9 @@ def main():
     info = read_info()
     if not info or len(info) != 6:
         print(
-            f"{get_timestamp()} An error was found inside the user information file. Please ensure the file contains "
-            f"the following information in order: User agent, Discord token, Discord channel URL, Discord channel "
-            f"ID, Delay between messages, and Sleep time. Try again with python3 auto.py"
+            f"{get_timestamp()} An error was found inside the environment variables. Please ensure the following "
+            f"environment variables are set: USER_ID, DISCORD_TOKEN, CHANNEL_URL, CHANNEL_ID, DELAY_BETWEEN_MESSAGES, "
+            f"and SLEEP_TIME. Try again with python3 auto.py"
         )
         configure_info()
         return
@@ -115,7 +118,7 @@ def main():
 
     while True:
         try:
-            with open(MESSAGES_FILE, "r") as file:
+            with open("messages.txt", "r") as file:
                 messages = file.read().splitlines()
         except FileNotFoundError:
             print(f"{get_timestamp()} Messages file not found.")
@@ -129,7 +132,7 @@ def main():
             random_sleep(delay_between_messages, 1, 10)
 
         print(f"{get_timestamp()} Finished sending all messages!")
-        random_sleep(sleep_time, 20, 1200)
+        random_sleep(sleep_time, 20, 150)
 
 if __name__ == "__main__":
     main()
