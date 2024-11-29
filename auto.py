@@ -84,7 +84,7 @@ def get_connection():
 
 def generate_random_text(length=10):
     letters = string.ascii_letters + string.digits
-    return ''.join(random.choice(letters) for i in length)
+    return ''.join(random.choice(letters) for _ in range(length))
 
 def main():
     if len(sys.argv) > 1:
