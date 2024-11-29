@@ -5,6 +5,7 @@ import time
 import os
 from datetime import datetime
 from http.client import HTTPSConnection
+import string
 
 def get_timestamp():
     """
@@ -81,6 +82,10 @@ def send_message(conn, channel_id, message_data, header_data):
 def get_connection():
     return HTTPSConnection("discordapp.com", 443)
 
+def generate_random_text(length=10):
+    letters = string.ascii_letters + string.digits
+    return ''.join(random.choice(letters) for i in length)
+
 def main():
     if len(sys.argv) > 1:
         if sys.argv[1] == "--config" and input("Configure? (y/n)") == "y":
@@ -117,14 +122,8 @@ def main():
     sleep_time = int(info[5])
 
     while True:
-        try:
-            with open("messages.txt", "r") as file:
-                messages = file.read().splitlines()
-        except FileNotFoundError:
-            print(f"{get_timestamp()} Messages file not found.")
-            return
-
-        for message in messages:
+        for _ in range(10):  # Adjust the range as needed
+            message = generate_random_text()
             message_data = json.dumps({"content": message})
             conn = get_connection()
             send_message(conn, info[3], message_data, header_data)
