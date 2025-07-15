@@ -16,9 +16,9 @@ class MyClient(discord.Client):
     async def do_spam(self):
         channel = self.get_channel(channel_id)
         while True:
-            await channel.send('Con cò bé bé', delete_after=3)
+            await channel.send('/dice amount:5000', delete_after=3)
             print('Message sent!')
-            await asyncio.sleep(10)
+            await asyncio.sleep(6)
             await self.close()
             await asyncio.sleep(2)
             await self.start(user_token)
@@ -26,3 +26,4 @@ class MyClient(discord.Client):
 
 client = MyClient()
 client.run(user_token)
+
