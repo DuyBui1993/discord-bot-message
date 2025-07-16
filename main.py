@@ -20,9 +20,9 @@ class MyClient(discord.Client):
     async def do_spam(self):
         self.message_channel = self.get_channel(channel_id)
         while True:
-            await self.message_channel.send('xin coin', delete_after=1)
+            await self.message_channel.send('/dice amount:5000')
             print('Message sent!')
-            await asyncio.sleep(1)
+            await asyncio.sleep(10)
 
 
 client = MyClient()
