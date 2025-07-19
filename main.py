@@ -19,7 +19,7 @@ class MyClient(discord.Client):
 
     async def do_spam(self):
         self.message_channel = self.get_channel(channel_id)
-        for _ in range(50):
+        for _ in range(100):
             await self.message_channel.send('Lạy ông đi qua, lạy bà đi lại, thương tình cho con xin ít coin để sống qua ngày ạ! thành tâm xin coin')
             print('Message sent!')
             await asyncio.sleep(2)
