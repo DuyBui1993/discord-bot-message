@@ -18,14 +18,20 @@ class MyClient(discord.Client):
         await self.do_spam()
 
     async def do_spam(self):
-        self.message_channel = self.get_channel(channel_id)
-        for _ in range(100):
-            await self.message_channel.send('Lạy ông đi qua, lạy bà đi lại, thương tình cho con xin ít coin để sống qua ngày ạ! thành tâm xin coin')
-            print('Message sent!')
+        try:
+            self.message_channel = self.get_channel(channel_id)
+            for _ in range(100):
+                await self.message_channel.send('Lạy ông đi qua, lạy bà đi lại, thương tình cho con xin ít coin để sống qua ngày ạ! thành tâm xin coin')
+                print('Message sent!')
+                await asyncio.sleep(2)
+            await self.close()
             await asyncio.sleep(2)
-        await self.close()
-        await asyncio.sleep(2)
-        await self.start(user_token)
+            await self.start(user_token)
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            await self.close()
+            await asyncio.sleep(2)
+            await self.start(user_token)
 
 
 client = MyClient()
