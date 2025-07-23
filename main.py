@@ -21,9 +21,9 @@ class MyClient(discord.Client):
         try:
             self.message_channel = self.get_channel(channel_id)
             for _ in range(100):
-                await self.message_channel.send('Lạy ông đi qua, lạy bà đi lại, thương tình cho con xin ít coin để sống qua ngày ạ!', delete_after=1)
+                await self.message_channel.send('Lạy ông đi qua, lạy bà đi lại, thương tình cho con xin ít coin để sống qua ngày ạ!')
                 print('Message sent!')
-                await asyncio.sleep(2)
+                await asyncio.sleep(3)
             await self.close()
             await asyncio.sleep(2)
             await self.start(user_token)
